@@ -141,3 +141,6 @@ html {
 .hide-scrollbar {
   -ms-overflow-style: none;
 }
+
+/* shadow */
+/* shadow-[0px_12px_24px_-1px_rgba(0,0,0,0.3)] */
