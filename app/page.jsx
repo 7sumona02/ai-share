@@ -2,6 +2,76 @@
 import { AnimatePresence } from "motion/react"
 import { motion } from 'motion/react'
 import { ArrowRight } from "lucide-react"
+import { 
+  Circle, 
+  Sun, 
+  Monitor, 
+  Layout, 
+  Cloud, 
+  Database,
+  Sparkles,
+  Globe,
+  User,
+  Zap,
+  ShoppingCart,
+  Smartphone,
+  AppWindow,
+  PenTool,
+  Code,
+  Cpu,
+  RefreshCw
+} from 'lucide-react';
+
+const getIcon = (iconName) => {
+  switch (iconName) {
+    case 'circle': return <Circle className="w-4 h-4" />;
+    case 'sun': return <Sun className="w-4 h-4" />;
+    case 'monitor': return <Monitor className="w-4 h-4" />;
+    case 'layout': return <Layout className="w-4 h-4" />;
+    case 'cloud': return <Cloud className="w-4 h-4" />;
+    case 'database': return <Database className="w-4 h-4" />;
+    default: return null;
+  }
+};
+
+export const FILTER_CATEGORIES = [
+  {
+    id: 'types',
+    label: 'Types',
+    icon: 'circle',
+    options: ['Agency', 'AI', 'Apple Watch App', 'Architecture', 'Art', 'Automotive', 'Bar', 'Beauty', 'Case Study', 'Communication', 'Community', 'Conference', 'Construction', 'Craft']
+  },
+  {
+    id: 'styles',
+    label: 'Styles',
+    icon: 'sun',
+    options: ['Minimal', '3D', 'Bento', 'Retro', 'Futuristic', 'Dark Mode', 'Glassmorphism', 'Clean', 'Colorful', 'Corporate']
+  },
+  {
+    id: 'platforms',
+    label: 'Platforms',
+    icon: 'monitor',
+    options: ['Web', 'Mobile', 'Tablet', 'TV', 'Dashboard']
+  },
+  {
+    id: 'frameworks',
+    label: 'Frameworks',
+    icon: 'layout',
+    options: ['Next.js', 'React', 'Vue', 'Svelte', 'Astro', 'Remix']
+  },
+  {
+    id: 'hosting',
+    label: 'Hosting',
+    icon: 'cloud',
+    options: ['Vercel', 'Netlify', 'AWS', 'Google Cloud', 'Heroku']
+  },
+  {
+    id: 'cms',
+    label: 'CMS',
+    icon: 'database',
+    options: ['Sanity', 'Contentful', 'Strapi', 'Payload', 'WordPress']
+  }
+];
 
 const NAVIGATION_LINKS = [
   { label: 'Websites', href: '#websites' },
@@ -66,10 +136,39 @@ const INITIAL_FILTERS = [
   { id: 'sybau', label: 'SYBAU', isActive: false },
 ];
 
+const QUICK_FILTERS = [
+  { label: 'AI', icon: <Sparkles className="w-4 h-4" /> },
+  { label: 'Web3', icon: <Globe className="w-4 h-4" /> },
+  { label: 'Portfolios', icon: <User className="w-4 h-4" /> },
+  { label: 'Startups', icon: <Zap className="w-4 h-4" /> },
+  { label: 'E-commerce', icon: <ShoppingCart className="w-4 h-4" /> },
+  { label: 'Mobile Apps', icon: <Smartphone className="w-4 h-4" /> },
+  { label: 'Desktop Apps', icon: <AppWindow className="w-4 h-4" /> },
+  { label: 'Design', icon: <PenTool className="w-4 h-4" /> },
+  { label: 'Development', icon: <Code className="w-4 h-4" /> },
+  { label: 'Tech', icon: <Cpu className="w-4 h-4" /> },
+  { label: 'SaaS', icon: <RefreshCw className="w-4 h-4" /> },
+];
+
 export default function Page() {
   const [filters, setFilters] = useState(INITIAL_FILTERS);
   const [aiInsight, setAiInsight] = useState('');
   const [isInsightLoading, setIsInsightLoading] = useState(false);
+   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [activeFilters, setActiveFilters] = useState([]);
+
+  const handleApplyFilters = (filters) => {
+    // Merge or replace based on desired UX - here we replace for modal apply
+    setActiveFilters(filters);
+  };
+
+  const handleToggleQuickFilter = (label) => {
+    setActiveFilters(prev => 
+      prev.includes(label) 
+        ? prev.filter(f => f !== label) 
+        : [...prev, label]
+    );
+  };
 
   const toggleFilter = useCallback((id) => {
     setFilters(prev => prev.map(f =>
@@ -162,83 +261,33 @@ export default function Page() {
         id="showcase"
         className="mx-auto w-full px-10 border-t-2 border-t-neutral-800 pt-10"
       >
-        <section id='filter-tags'>
-          <div className="">
-            <div className="mx-auto px-6 py-6 overflow-x-auto hide-scrollbar">
-              <div className="flex items-center gap-3">
-                {filters.map(filter => (
-                  <FilterTag
-                    key={filter.id}
-                    filter={filter}
-                    onToggle={toggleFilter}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* filter section */}
+        <div>
 
-         {/* <div className="mx-auto w-full py-10">
-          <div className="flex items-start gap-2">
-            <h2 className="font-vt text-4xl md:text-5xl tracking-tight">AI Tools</h2>
-            <span className="text-neutral-300 text-sm">(500)</span>
-          </div>
-          </div> */}
+          {/* Filter Component */}
+          <FilterBar
+            onOpenModal={() => setIsFilterModalOpen(true)}
+            activeFilters={activeFilters}
+            onToggleQuickFilter={handleToggleQuickFilter}
+          />
 
-        {/* <div className="mx-auto w-full px-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-5">
-          <div className="flex items-start gap-2 mt-2">
-            <h2 className="font-vt text-4xl md:text-5xl tracking-tight">AI Tools</h2>
-            <span className="text-neutral-300 text-sm">(500)</span>
-          </div>
-          {showcaseItems.map((item, i) => (
-            <div
-              key={i}
-              className="group p-3 w-full rounded-xl border border-neutral-700 bg-neutral-900/0
-                 hover:bg-neutral-800 hover:-translate-y-2
-                 transition-all duration-300 ease-out"
-            >
-              <div className="relative w-full h-[35vh] rounded-md overflow-hidden">
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  loading="lazy"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-
-              <div className="pt-4 pb-2 flex items-center justify-between text-neutral-300 group-hover:text-white transition-colors">
-                <h3 className="text-base font-medium font-ibm">
-                  {item.title}
-                </h3>
-                <ArrowRight
-                  size={20}
-                  className="transition-transform duration-300 group-hover:-rotate-45"
-                />
-              </div>
-
-              <div className="flex flex-wrap gap-2 pb-1">
-                {item.tags.map((tag, idx) => (
-                  <span
-                    key={idx}
-                    className="rounded-sm bg-neutral-700 px-3 py-1.5 text-xs text-white"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div> */}
+          {/* Filter Modal */}
+          <FilterModal
+            isOpen={isFilterModalOpen}
+            onClose={() => setIsFilterModalOpen(false)}
+            onApply={handleApplyFilters}
+          />
+        </div>
 
         <section className="grid grid-cols-1 md:grid-cols-6 auto-rows-[400px] gap-5 py-10">
           {showcaseItems.map((item, i) => {
             const bentoStyles = [
-              "md:col-span-4 md:row-span-2", 
+              "md:col-span-4 md:row-span-2",
               "md:col-span-2 md:row-span-1",
               "md:col-span-2 md:row-span-1",
               "md:col-span-2 md:row-span-1",
-              "md:col-span-4 md:row-span-2", 
-              "md:col-span-2 md:row-span-1", 
+              "md:col-span-4 md:row-span-2",
+              "md:col-span-2 md:row-span-1",
             ]
 
             return (
@@ -300,24 +349,231 @@ export default function Page() {
   );
 }
 
-const FilterTag = ({ filter, onToggle }) => {
+import { Search, X } from 'lucide-react';
+
+const FilterModal = ({ isOpen, onClose, onApply }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState(FILTER_CATEGORIES[0].id);
+  const [selectedFilters, setSelectedFilters] = useState([]);
+
+  const toggleFilter = (option) => {
+    setSelectedFilters(prev => 
+      prev.includes(option) ? prev.filter(f => f !== option) : [...prev, option]
+    );
+  };
+
+  const currentCategory = FILTER_CATEGORIES.find(c => c.id === activeCategory);
+
   return (
-    <button
-      onClick={() => onToggle(filter.id)}
-      className={`
-        flex items-center gap-3 px-6 py-3.5 rounded-md transition-all ease-out
-        bg-white hover:bg-neutral-200 active:scale-95
-        font-ibm text-xs tracking-widest font-medium text-black whitespace-nowrap uppercase
-      `}
-    >
-      <span
-        className={`w-2.5 h-2.5 rounded-full transition-colors duration-200 ${filter.isActive ? 'bg-[#222222]' : 'bg-[#D1D1D1]'
-          }`}
-      />
-      {filter.label}
-    </button>
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+          />
+
+          {/* Modal Content */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+          >
+            {/* Search Header */}
+            <div className="p-4 border-b border-gray-100 flex items-center gap-3">
+              <Search className="w-5 h-5 text-gray-400 ml-2" />
+              <input
+                type="text"
+                placeholder='"Gradient", "Webflow", "Minimal"'
+                className="flex-1 bg-transparent border-none outline-none text-lg text-gray-800 placeholder-gray-400"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                autoFocus
+              />
+              <button 
+                onClick={onClose}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+
+            <div className="flex flex-1 overflow-hidden min-h-[400px]">
+              {/* Left Sidebar - Categories */}
+              <div className="w-48 bg-gray-50/50 border-r border-gray-100 overflow-y-auto py-4">
+                {FILTER_CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveCategory(cat.id)}
+                    className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors relative ${
+                      activeCategory === cat.id ? 'text-black bg-white/50 shadow-sm' : 'text-gray-500 hover:text-black'
+                    }`}
+                  >
+                    {activeCategory === cat.id && (
+                      <motion.div 
+                        layoutId="active-indicator"
+                        className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-black rounded-r-full"
+                      />
+                    )}
+                    <span className={activeCategory === cat.id ? 'text-black' : 'text-gray-400'}>
+                      {getIcon(cat.icon)}
+                    </span>
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Right Content - Options */}
+              <div className="flex-1 overflow-y-auto p-6">
+                <div className="grid grid-cols-1 gap-1">
+                  {currentCategory?.options.map((option) => (
+                    <button
+                      key={option}
+                      onClick={() => toggleFilter(option)}
+                      className={`w-full text-left px-4 py-2.5 rounded-xl text-[15px] font-medium transition-all ${
+                        selectedFilters.includes(option)
+                          ? 'bg-gray-900 text-white shadow-md'
+                          : 'text-gray-600 hover:bg-gray-100'
+                      }`}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-4 border-t border-gray-100 flex items-center justify-between bg-white">
+              <button 
+                onClick={() => setSelectedFilters([])}
+                className="text-sm font-medium text-gray-400 hover:text-gray-600 transition-colors px-4"
+              >
+                Clear all
+              </button>
+              <button
+                onClick={() => {
+                  onApply(selectedFilters);
+                  onClose();
+                }}
+                className="bg-black text-white px-8 py-2.5 rounded-full text-sm font-bold hover:bg-gray-800 transition-colors shadow-lg shadow-black/10"
+              >
+                Apply Filters
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
   );
 };
+
+import { useRef } from 'react';
+import { SlidersHorizontal } from 'lucide-react';
+
+const FilterBar = ({ onOpenModal, activeFilters, onToggleQuickFilter }) => {
+  const scrollRef = useRef(null);
+  const [showLeftMask, setShowLeftMask] = useState(false);
+  const [showRightMask, setShowRightMask] = useState(true);
+
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      setShowLeftMask(scrollLeft > 20);
+      setShowRightMask(scrollLeft < scrollWidth - clientWidth - 20);
+    }
+  };
+
+  useEffect(() => {
+    handleScroll();
+  }, []);
+
+  return (
+    <div className="relative flex items-center gap- bg-black border-b border-white/10 sticky top-0 z-40">
+      {/* Primary Filter Toggle */}
+      <button 
+        onClick={onOpenModal}
+        className="flex items-center gap-2 px-5 py-3 rounded-xl border border-white/20 hover:border-white transition-colors bg-white/10 shrink-0 group"
+      >
+        <SlidersHorizontal className="w-4 h-4 text-white/70 group-hover:text-white" />
+        <span className="text-xs font-bold uppercase tracking-widest text-white/70 group-hover:text-white">Filter</span>
+        <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white text-black text-[10px] font-black">
+          {activeFilters.length}
+        </span>
+      </button>
+
+      {/* Vertical Divider */}
+      <div className="w-px h-8 bg-white/10 shrink-0 mx-2" />
+
+      {/* Scrolling Container */}
+      <div className="relative flex-1 overflow-hidden">
+        {/* Left Mask */}
+        <div 
+          className={`absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-black via-black/80 to-transparent z-10 pointer-events-none transition-opacity duration-300 ${showLeftMask ? 'opacity-100' : 'opacity-0'}`}
+        />
+        
+        {/* Right Mask */}
+        <div 
+          className={`absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-black via-black/80 to-transparent z-10 pointer-events-none transition-opacity duration-300 ${showRightMask ? 'opacity-100' : 'opacity-0'}`}
+        />
+
+        <div 
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex items-center gap-4 overflow-x-auto hide-scrollbar scroll-smooth px-4"
+        >
+          {QUICK_FILTERS.map((filter) => {
+            const isSelected = activeFilters.includes(filter.label);
+            return (
+              <button
+                key={filter.label}
+                onClick={() => onToggleQuickFilter(filter.label)}
+                className={`flex items-center gap-3 px-6 py-4 rounded-xl whitespace-nowrap ${
+                  isSelected ? 'bg-white' : 'bg-white'
+                } text-black`}
+              >
+                {/* Dot color logic: black if selected, light gray if not */}
+                <div 
+                  className={`w-3 h-3 rounded-full transition-colors duration-300 ${
+                    isSelected ? 'bg-black' : 'bg-gray-300'
+                  }`} 
+                />
+                <span className="text-xs font- uppercase tracking-[0.15em] font-ibm">
+                  {filter.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// const FilterTag = ({ filter, onToggle }) => {
+//   return (
+//     <button
+//       onClick={() => onToggle(filter.id)}
+//       className={`
+//         flex items-center gap-3 px-6 py-3.5 rounded-md transition-all ease-out
+//         bg-white hover:bg-neutral-200 active:scale-95
+//         font-ibm text-xs tracking-widest font-medium text-black whitespace-nowrap uppercase
+//       `}
+//     >
+//       <span
+//         className={`w-2.5 h-2.5 rounded-full transition-colors duration-200 ${filter.isActive ? 'bg-[#222222]' : 'bg-[#D1D1D1]'
+//           }`}
+//       />
+//       {filter.label}
+//     </button>
+//   );
+// };
 
 const Navbar = ({ items }) => {
   const [activeTab, setActiveTab] = useState(
