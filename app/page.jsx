@@ -1,7 +1,7 @@
 'use client'
 import { AnimatePresence } from "motion/react"
 import { motion } from 'motion/react'
-import { ArrowRight, ArrowUpRight } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 
 const NAVIGATION_LINKS = [
   { label: 'Websites', href: '#websites' },
